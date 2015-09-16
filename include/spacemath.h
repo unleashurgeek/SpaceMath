@@ -68,6 +68,33 @@ public:
 
     vec2() { }
     vec2(T _x, T _y) { v[0] = _x; v[1] = _y; }
+
+#   define CREATE_ASSIGNMENT_OPERATOR(Op)                                   \
+    template<typename rhsT>                                                 \
+    vec2& operator##Op##(const vec2<rhsT>& _rhs)                            \
+    {                                                                       \
+        ((T*)this)[0] Op ((const rhsT*)&_rhs)[0];                           \
+        ((T*)this)[1] Op ((const rhsT*)&_rhs)[0];                           \
+        return *this;                                                       \
+    }                                                                       \
+    template<typename rhsT>                                                 \
+    vec2& operator##Op##(const rhsT _rhs)                                   \
+    {                                                                       \
+        ((T*)this)[0] Op _rhs;                                              \
+        ((T*)this)[1] Op _rhs;                                              \
+        return *this;                                                       \
+    }                                                                       \
+    template<typename rhsVT, typename rhsT, int rhsA, int rhsB>             \
+    vec2& operator##Op##(const v2Proxy<rhsVT, rhsT, rhsA, rhsB>& _rhs)      \
+    {                                                                       \
+        ((T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];                        \
+        ((T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];                        \
+        return *this;                                                       \
+    }
+
+    CREATE_ASSIGNMENT_OPERATOR(+= );
+
+#   undef CREATE_ASSIGNMENT_OPERATOR
 };
 
 #endif
