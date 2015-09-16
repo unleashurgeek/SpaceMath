@@ -32,9 +32,9 @@ endif()
 #--------------------------------------------------------------------
 # Add subdirectories and set Project
 #--------------------------------------------------------------------
-add_library(spacemath "${CMAKE_CURRENT_SOURCE_DIR}/include/spacemath.h")
+add_library(spacemath "${SpaceMath_SOURCE_DIR}/include/spacemath.h")
 set_target_properties(spacemath PROPERTIES LINKER_LANGUAGE CXX)
 
 if (SPACEMATH_BUILD_TEST)
-    #add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()
