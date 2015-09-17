@@ -71,6 +71,13 @@ public:
         result[0] = ((const T*)this)[A] Op _rhs;                                    \
         result[1] = ((const T*)this)[B] Op _rhs;                                    \
         return result;                                                              \
+    }                                                                               \
+    friend vT operator##Op##(const T _lhs, const v2Proxy& _rhs)                     \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = _lhs Op((const T*)& _rhs)[A];                                   \
+        result[1] = _lhs Op((const T*)& _rhs)[B];                                   \
+        return result;                                                              \
     }
 
     CREATE_ARITHMETIC_OPERATOR(+);
