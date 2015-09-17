@@ -155,6 +155,14 @@ public:
         result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];              \
         result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];              \
         return result;                                                              \
+    }                                                                               \
+    template<typename rhsT>                                                         \
+    vec2 operator##Op##(const vec2<rhsT>& _rhs) const                               \
+    {                                                                               \
+        vec2 result;                                                                \
+        result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[0];                 \
+        result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[1];                 \
+        return result;                                                              \
     }
 
     CREATE_ARITHMETIC_OPERATOR(+);
