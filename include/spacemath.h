@@ -146,6 +146,20 @@ public:
     CREATE_ASSIGNMENT_OPERATOR(/= );
 
 #   undef CREATE_ASSIGNMENT_OPERATOR
+
+#   define CREATE_ARITHMETIC_OPERATOR(Op)                                           \
+    template<class rhsVT, typename rhsT, int rhsA, int rhsB>                        \
+    vec2 operator##Op##(const v2Proxy<rhsVT, rhsT, rhsA, rhsB>& _rhs) const         \
+    {                                                                               \
+        vec2 result;                                                                \
+        result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];              \
+        result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];              \
+        return result;                                                              \
+    }
+
+    CREATE_ARITHMETIC_OPERATOR(+);
+
+#   undef CREATE_ARITHMETIC_OPERATOR
 };
 
 #endif
