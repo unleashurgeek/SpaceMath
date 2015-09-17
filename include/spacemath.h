@@ -115,6 +115,8 @@ public:
 
     vec2() { }
     vec2(T _x, T _y) { v[0] = _x; v[1] = _y; }
+    template<typename iT>
+    vec2(vec2<iT>& _v) { v[0] = _v.v[0]; v[1] = _v.v[1]; }
 
 #   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
     template<typename rhsT>                                                         \
