@@ -65,7 +65,9 @@ public:
     union
     {
         T v[2];
-        struct { T x, y, r, g, s, t; };
+        struct { T x, y; };
+        struct { T r, g; };
+        struct { T s, t; };
 
         v2Proxy<vec2, T, 0, 0> xx, rr, ss;
         v2Proxy<vec2, T, 0, 1> xy, rg, st;
