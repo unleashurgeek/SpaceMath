@@ -170,9 +170,19 @@ public:
         result[0] = ((const T*)this)[0] Op _rhs;                                    \
         result[1] = ((const T*)this)[1] Op _rhs;                                    \
         return result;                                                              \
+    }                                                                               \
+    friend vec2 operator##Op##(const T _lhs, const vec2& _rhs)                      \
+    {                                                                               \
+        vec2 result;                                                                \
+        result[0] = _lhs Op ((const T*)&_rhs)[0];                                   \
+        result[1] = _lhs Op ((const T*)&_rhs)[1];                                   \
+        return result;                                                              \
     }
 
     CREATE_ARITHMETIC_OPERATOR(+);
+    CREATE_ARITHMETIC_OPERATOR(-);
+    CREATE_ARITHMETIC_OPERATOR(*);
+    CREATE_ARITHMETIC_OPERATOR(/);
 
 #   undef CREATE_ARITHMETIC_OPERATOR
 };
