@@ -78,6 +78,14 @@ public:
         result[0] = _lhs Op((const T*)& _rhs)[A];                                   \
         result[1] = _lhs Op((const T*)& _rhs)[B];                                   \
         return result;                                                              \
+    }                                                                               \
+    template<template<typename> class rhsVT, typename rhsT>                         \
+    vT operator##Op##(const rhsVT<rhsT>& _rhs) const                                \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = ((const T*)this)[A] Op ((const rhsT*)&_rhs)[0];                 \
+        result[1] = ((const T*)this)[B] Op ((const rhsT*)&_rhs)[1];                 \
+        return result;                                                              \
     }
 
     CREATE_ARITHMETIC_OPERATOR(+);
