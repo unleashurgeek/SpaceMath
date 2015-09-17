@@ -102,7 +102,6 @@ class vec2 : public CommonVectorOperators<T>
 public:
     union
     {
-        T v[2];
         struct { T x, y; };
         struct { T r, g; };
         struct { T s, t; };
@@ -113,10 +112,10 @@ public:
         v2Proxy<vec2, T, 1, 1> yy, gg, tt;
     };
 
-    vec2() { }
-    vec2(T _x, T _y) { v[0] = _x; v[1] = _y; }
     template<typename iT>
-    vec2(vec2<iT>& _v) { v[0] = _v.v[0]; v[1] = _v.v[1]; }
+    vec2(vec2<iT>& _v) { ((T*)this)[0] = ((const iT*)&_v)[0]; ((T*)this)[1] = ((const iT*)&_v)[1]; }
+    vec2(T _x, T _y) { ((T*)this)[0] = _x; ((T*)this)[1] = _y; }
+    vec2() { }
 
 #   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
     template<typename rhsT>                                                         \
