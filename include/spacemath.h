@@ -33,8 +33,7 @@ public:
         ((T*)this)[B] Op ((const rhsT*)&_rhs)[rhsB];                                \
         return *this;                                                               \
     }                                                                               \
-    template<typename rhsT>                                                         \
-    assignmentType& operator##Op##(const rhsT _rhs)                                 \
+    assignmentType& operator##Op##(const T _rhs)                                    \
     {                                                                               \
         ((T*)this)[A] Op _rhs;                                                      \
         ((T*)this)[B] Op _rhs;                                                      \
@@ -66,8 +65,7 @@ public:
         result[1] = ((const T*)this)[B] Op ((const rhsT*)&_rhs)[rhsB];              \
         return result;                                                              \
     }                                                                               \
-    template<typename rhsT>                                                         \
-    vT operator##Op##(const rhsT _rhs) const                                        \
+    vT operator##Op##(const T _rhs) const                                           \
     {                                                                               \
         vT result;                                                                  \
         result[0] = ((const T*)this)[A] Op _rhs;                                    \
@@ -108,8 +106,7 @@ public:
         ((T*)this)[1] Op ((const rhsT*)&_rhs)[0];                           \
         return *this;                                                       \
     }                                                                       \
-    template<typename rhsT>                                                 \
-    vec2& operator##Op##(const rhsT _rhs)                                   \
+    vec2& operator##Op##(const T _rhs)                                      \
     {                                                                       \
         ((T*)this)[0] Op _rhs;                                              \
         ((T*)this)[1] Op _rhs;                                              \
