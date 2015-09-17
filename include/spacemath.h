@@ -121,7 +121,7 @@ public:
     vec2& operator##Op##(const vec2<rhsT>& _rhs)                            \
     {                                                                       \
         ((T*)this)[0] Op ((const rhsT*)&_rhs)[0];                           \
-        ((T*)this)[1] Op ((const rhsT*)&_rhs)[0];                           \
+        ((T*)this)[1] Op ((const rhsT*)&_rhs)[1];                           \
         return *this;                                                       \
     }                                                                       \
     vec2& operator##Op##(const T _rhs)                                      \
