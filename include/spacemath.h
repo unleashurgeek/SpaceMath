@@ -163,6 +163,13 @@ public:
         result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[0];                 \
         result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[1];                 \
         return result;                                                              \
+    }                                                                               \
+    vec2 operator##Op##(const T _rhs) const                                         \
+    {                                                                               \
+        vec2 result;                                                                \
+        result[0] = ((const T*)this)[0] Op _rhs;                                    \
+        result[1] = ((const T*)this)[1] Op _rhs;                                    \
+        return result;                                                              \
     }
 
     CREATE_ARITHMETIC_OPERATOR(+);
