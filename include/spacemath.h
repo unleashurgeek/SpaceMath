@@ -18,7 +18,7 @@ public:
     }
 };
 
-template<typename vecT, typename T, int A, int B>
+template<class vT, typename T, int A, int B>
 class v2Proxy : public CommonVectorOperators<T>
 {
 public:
@@ -26,7 +26,7 @@ public:
     typedef typename std::conditional<isWritable, v2Proxy, struct OperationNotValid>::type assignmentType;
 
 #   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
-    template<typename rhsVT, typename rhsT, int rhsA, int rhsB>                     \
+    template<class rhsVT, typename rhsT, int rhsA, int rhsB>                        \
     assignmentType& operator##Op##(const v2Proxy<rhsVT, rhsT, rhsA, rhsB>& _rhs)    \
     {                                                                               \
         ((T*)this)[A] Op ((const rhsT*)&_rhs)[rhsA];                                \
@@ -84,7 +84,7 @@ public:
         ((T*)this)[1] Op _rhs;                                              \
         return *this;                                                       \
     }                                                                       \
-    template<typename rhsVT, typename rhsT, int rhsA, int rhsB>             \
+    template<class rhsVT, typename rhsT, int rhsA, int rhsB>                \
     vec2& operator##Op##(const v2Proxy<rhsVT, rhsT, rhsA, rhsB>& _rhs)      \
     {                                                                       \
         ((T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];                        \
