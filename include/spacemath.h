@@ -39,6 +39,13 @@ public:
         ((T*)this)[A] Op _rhs;                                                      \
         ((T*)this)[B] Op _rhs;                                                      \
         return *this;                                                               \
+    }                                                                               \
+    template<template<typename> class rhsVT, typename rhsT>                      \
+    assignmentType& operator##Op##(const rhsVT<rhsT>& _rhs)                         \
+    {                                                                               \
+        ((T*)this)[A] Op _rhs[0];                                                   \
+        ((T*)this)[B] Op _rhs[1];                                                   \
+        return *this;                                                               \
     }
 
     CREATE_ASSIGNMENT_OPERATOR(= );
