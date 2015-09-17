@@ -101,7 +101,12 @@ public:
         return *this;                                                       \
     }
 
+    CREATE_ASSIGNMENT_OPERATOR(= );
+
     CREATE_ASSIGNMENT_OPERATOR(+= );
+    CREATE_ASSIGNMENT_OPERATOR(-= );
+    CREATE_ASSIGNMENT_OPERATOR(*= );
+    CREATE_ASSIGNMENT_OPERATOR(/= );
 
 #   undef CREATE_ASSIGNMENT_OPERATOR
 };
