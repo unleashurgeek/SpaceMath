@@ -4,7 +4,7 @@
 #include <iostream>
 
 template<typename T>
-class CommonVectorOperators
+class ArraySubscriptOperators
 {
 public:
     T& operator[] (int _index)
@@ -19,7 +19,7 @@ public:
 };
 
 template<class vT, typename T, int A, int B>
-class v2Proxy : public CommonVectorOperators<T>
+class v2Proxy : public ArraySubscriptOperators<T>
 {
 public:
     static const bool isWritable = (A != B);
@@ -97,7 +97,7 @@ public:
 };
 
 template<typename T>
-class vec2 : public CommonVectorOperators<T>
+class vec2 : public ArraySubscriptOperators<T>
 {
 public:
     union
