@@ -173,6 +173,12 @@ public:
         ((T*)this)[0] = ((const iT*)&_v)[0];
         ((T*)this)[1] = ((const iT*)&_v)[1];
     }
+    template<typename pT, int A, int B>
+    vec2(v2Proxy<vec2, pT, A, B>& _v)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[A];
+        ((T*)this)[1] = ((const pT*)&_v)[B];
+    }
 
 #   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
     template<typename rhsT>                                                         \
