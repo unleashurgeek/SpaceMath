@@ -130,6 +130,25 @@ public:
 #   undef CREATE_COMPARISON_OPERATOR
 };
 
+template<class vT, typename T, int A, int B, int C>
+class v3Proxy : public ArraySubscriptOperators<T>
+{
+public:
+    static const bool isWritable = (A != B) && (B != C) && (A != C);
+    typedef typename std::conditional<isWritable,
+        v3Proxy, struct OperationNotValid>::type assignmentType;
+};
+
+template<class vT, typename T, int A, int B, int C, int D>
+class v4Proxy : public ArraySubscriptOperators<T>
+{
+public:
+    static const bool isWritable = (A != B) && (B != C) && (C != D)
+                                   && (A != C) && (A != D) && (B != D);
+    typedef typename std::conditional<isWritable,
+        v4Proxy, struct OperationNotValid>::type assignmentType;
+};
+
 template<typename T>
 class vec2 : public ArraySubscriptOperators<T>
 {
