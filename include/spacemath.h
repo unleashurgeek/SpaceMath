@@ -78,15 +78,7 @@ public:
         result[0] = _lhs Op((const T*)& _rhs)[A];                                   \
         result[1] = _lhs Op((const T*)& _rhs)[B];                                   \
         return result;                                                              \
-    }                                                                               \
-    template<template<typename> class rhsVT, typename rhsT>                         \
-    vT operator##Op##(const rhsVT<rhsT>& _rhs) const                                \
-    {                                                                               \
-        vT result;                                                                  \
-        result[0] = ((const T*)this)[A] Op ((const rhsT*)&_rhs)[0];                 \
-        result[1] = ((const T*)this)[B] Op ((const rhsT*)&_rhs)[1];                 \
-        return result;                                                              \
-    }
+    }                                                                               
 
     CREATE_ARITHMETIC_OPERATOR(+);
     CREATE_ARITHMETIC_OPERATOR(-);
@@ -155,6 +147,14 @@ public:
         vec2 result;                                                                \
         result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];              \
         result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];              \
+        return result;                                                              \
+    }                                                                               \
+    template<class lhsVT, typename lhsT, int lhsA, int lhsB>                        \
+    friend vec2 operator##Op##(const v2Proxy<lhsVT, lhsT, lhsA, lhsB>& _lhs, const vec2& _rhs) \
+    {                                                                               \
+        vec2 result;                                                                \
+        result[0] = ((const lhsT*)&_lhs)[lhsA] Op((const T*)&_rhs)[0];              \
+        result[1] = ((const lhsT*)&_lhs)[lhsB] Op((const T*)&_rhs)[1];              \
         return result;                                                              \
     }                                                                               \
     template<typename rhsT>                                                         \
