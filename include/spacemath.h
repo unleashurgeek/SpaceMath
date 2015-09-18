@@ -86,6 +86,28 @@ public:
     CREATE_ARITHMETIC_OPERATOR(/ );
 
 #   undef CREATE_ARITHMETIC_OPERATOR
+
+#   define CREATE_COMPARISON_OPERATOR(Op)                                           \
+    template<class rhsVT, typename rhsT, int rhsA, int rhsB>                        \
+    bool operator##Op##(const v2Proxy<rhsVT, rhsT, rhsA, rhsB>& _rhs) const         \
+    {                                                                               \
+        return (((const T*)this)[A] Op ((const rhsT*)&_rhs)[rhsA]) &&               \
+                    (((const T*)this)[B] Op ((const rhsT*)&_rhs)[rhsB]);            \
+    }                                                                               \
+    bool operator##Op##(const T _rhs) const                                         \
+    {                                                                               \
+        return (((const T*)this)[A] Op _rhs) &&                                     \
+                    (((const T*)this)[B] Op _rhs);                                  \
+    }                                                                               \
+    friend bool operator##Op##(const T _lhs, const v2Proxy& _rhs)                   \
+    {                                                                               \
+        return (_lhs Op ((const T*)&_rhs)[A]) &&                                    \
+                    (_lhs Op ((const T*)&_rhs)[B]);                                 \
+    }
+
+    CREATE_COMPARISON_OPERATOR(== );
+
+#   undef CREATE_COMPARISON_OPERATOR
 };
 
 template<typename T>
