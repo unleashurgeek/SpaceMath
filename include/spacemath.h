@@ -205,9 +205,42 @@ public:
     CREATE_ARITHMETIC_OPERATOR(+);
     CREATE_ARITHMETIC_OPERATOR(-);
     CREATE_ARITHMETIC_OPERATOR(*);
-    CREATE_ARITHMETIC_OPERATOR(/);
+    CREATE_ARITHMETIC_OPERATOR(/ );
 
 #   undef CREATE_ARITHMETIC_OPERATOR
+
+#   define CREATE_COMPARISON_OPERATOR(Op)                                           \
+    template<class rhsVT, typename rhsT, int rhsA, int rhsB>                        \
+    bool operator##Op##(const v2Proxy<rhsVT, rhsT, rhsA, rhsB>& _rhs) const         \
+    {                                                                               \
+        return (((const T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA]) &&               \
+                    (((const T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB]);            \
+    }                                                                               \
+    template<class lhsVT, typename lhsT, int lhsA, int lhsB>                        \
+    friend bool operator##Op##(const v2Proxy<lhsVT, lhsT, lhsA, lhsB>& _lhs,        \
+                               const vec2& _rhs)                                    \
+    {                                                                               \
+        return (((const lhsT*)&_lhs)[lhsA] Op ((const T*)&_rhs)[0]) &&              \
+                    (((const lhsT*)&_lhs)[lhsB] Op ((const T*)&_rhs)[1]);           \
+    }                                                                               \
+    template<typename rhsT>                                                         \
+    bool operator##Op##(const vec2<rhsT>& _rhs) const                               \
+    {                                                                               \
+        return (((const T*)this)[0] Op ((const rhsT*)&_rhs)[0]) &&                  \
+                    (((const T*)this)[1] Op ((const rhsT*)&_rhs)[1]);               \
+    }                                                                               \
+    bool operator##Op##(const T _rhs) const                                         \
+    {                                                                               \
+        return (((const T*)this)[0] Op _rhs) && (((const T*)this)[1] Op _rhs);      \
+    }                                                                               \
+    friend bool operator##Op##(const T _lhs, const vec2& _rhs)                      \
+    {                                                                               \
+        return (_lhs Op ((const T*)&_rhs)[0]) && (_lhs Op ((const T*)&_rhs)[1]);    \
+    }
+
+    CREATE_COMPARISON_OPERATOR(== );
+
+#   undef CREATE_COMPARISON_OPERATOR
 };
 
 #endif
