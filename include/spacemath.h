@@ -23,7 +23,8 @@ class v2Proxy : public ArraySubscriptOperators<T>
 {
 public:
     static const bool isWritable = (A != B);
-    typedef typename std::conditional<isWritable, v2Proxy, struct OperationNotValid>::type assignmentType;
+    typedef typename std::conditional<isWritable,
+        v2Proxy, struct OperationNotValid>::type assignmentType;
 
 #   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
     template<class rhsVT, typename rhsT, int rhsA, int rhsB>                        \
@@ -109,8 +110,8 @@ public:
     CREATE_COMPARISON_OPERATOR(!= );
     CREATE_COMPARISON_OPERATOR(<= );
     CREATE_COMPARISON_OPERATOR(>= );
-    CREATE_COMPARISON_OPERATOR(<);
-    CREATE_COMPARISON_OPERATOR(>);
+    CREATE_COMPARISON_OPERATOR(< );
+    CREATE_COMPARISON_OPERATOR(> );
 
 #   undef CREATE_COMPARISON_OPERATOR
 };
@@ -131,10 +132,14 @@ public:
         v2Proxy<vec2, T, 1, 1> yy, gg, tt;
     };
 
-    template<typename iT>
-    vec2(vec2<iT>& _v) { ((T*)this)[0] = ((const iT*)&_v)[0]; ((T*)this)[1] = ((const iT*)&_v)[1]; }
-    vec2(T _x, T _y) { ((T*)this)[0] = _x; ((T*)this)[1] = _y; }
     vec2() { }
+    vec2(T _x, T _y) { ((T*)this)[0] = _x; ((T*)this)[1] = _y; }
+    template<typename iT>
+    vec2(vec2<iT>& _v)
+    {
+        ((T*)this)[0] = ((const iT*)&_v)[0];
+        ((T*)this)[1] = ((const iT*)&_v)[1];
+    }
 
 #   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
     template<typename rhsT>                                                         \
@@ -177,7 +182,8 @@ public:
         return result;                                                              \
     }                                                                               \
     template<class lhsVT, typename lhsT, int lhsA, int lhsB>                        \
-    friend vec2 operator##Op##(const v2Proxy<lhsVT, lhsT, lhsA, lhsB>& _lhs, const vec2& _rhs) \
+    friend vec2 operator##Op##(const v2Proxy<lhsVT, lhsT, lhsA, lhsB>& _lhs,        \
+                               const vec2& _rhs)                                    \
     {                                                                               \
         vec2 result;                                                                \
         result[0] = ((const lhsT*)&_lhs)[lhsA] Op((const T*)&_rhs)[0];              \
