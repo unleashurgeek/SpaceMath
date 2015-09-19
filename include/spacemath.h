@@ -4,6 +4,13 @@
 #include <iostream>
 
 template<typename T>
+class vec2;
+template<typename T>
+class vec3;
+template<typename T>
+class vec4;
+
+template<typename T>
 class ArraySubscriptOperators
 {
 public:
@@ -311,6 +318,26 @@ public:
     CREATE_COMPARISON_OPERATOR(> );
 
 #   undef CREATE_COMPARISON_OPERATOR
+};
+
+template<typename T>
+class vec3 : public ArraySubscriptOperators<T>
+{
+    union
+    {
+        
+    };
+    vec3() { }
+};
+
+template<typename T>
+class vec4 : public ArraySubscriptOperators<T>
+{
+    union
+    {
+
+    };
+    vec4() { }
 };
 
 #endif
