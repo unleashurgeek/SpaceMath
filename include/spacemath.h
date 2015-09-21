@@ -65,9 +65,12 @@ public:
     {                                                                               \
         ((T*)this)[A] Op _rhs[0];                                                   \
         ((T*)this)[B] Op _rhs[1];                                                   \
-        if ((sizeof(vT) / sizeof(T) > 2) && (sizeof(rhsVT) / sizeof(rhsT) > 2))     \
+        if ((sizeof(vT) / sizeof(T) > 2) &&                                         \
+           (std::is_same<rhsVT<rhsT>, vec3<rhsT>>::value ||                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value))                          \
             ((T*)this)[C] Op _rhs[2];                                               \
-        if ((sizeof(vT) / sizeof(T) > 3) && (sizeof(rhsVT) / sizeof(rhsT) > 3))     \
+        if (std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value &&                         \
+           (sizeof(vT) / sizeof(T) > 3))                                            \
             ((T*)this)[D] Op _rhs[3];                                               \
         return *this;                                                               \
     }
