@@ -100,9 +100,9 @@ public:
         result[0] = ((const T*)this)[A] Op ((const rhsT*)&_rhs)[rhsA];              \
         result[1] = ((const T*)this)[B] Op ((const rhsT*)&_rhs)[rhsB];              \
         if ((sizeof(vT) / sizeof(T) > 2) && (sizeof(rhsVT) / sizeof(rhsT) > 2))     \
-            result[2] = ((const T*)this[C]) Op ((const rhsT*)&_rhs)[rhsC];          \
+            result[2] = ((const T*)this)[C] Op ((const rhsT*)&_rhs)[rhsC];          \
         if ((sizeof(vT) / sizeof(T) > 3) && (sizeof(rhsVT) / sizeof(rhsT) > 3))     \
-            result[3] = ((const T*)this[D]) Op ((const rhsT*)&_rhs)[rhsD];          \
+            result[3] = ((const T*)this)[D] Op ((const rhsT*)&_rhs)[rhsD];          \
         return result;                                                              \
     }                                                                               \
     vT operator##Op##(const T _rhs) const                                           \
@@ -216,7 +216,7 @@ public:
                (((const lhsT*)&_lhs)[3] Op ((const T*)&_rhs)[D]) : true);           \
     }                                                                               \
     template<template<typename> class rhsVT, typename rhsT>                         \
-    bool operator##Op##(const rhsVT<rhsT>& _rhs)                                    \
+    bool operator##Op##(const rhsVT<rhsT>& _rhs) const                              \
     {                                                                               \
         return (((const T*)this)[A] Op ((const rhsT*)&_rhs)[0]) &&                  \
                (((const T*)this)[B] Op ((const rhsT*)&_rhs)[1]) &&                  \
