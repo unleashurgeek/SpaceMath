@@ -126,7 +126,37 @@ public:
         if ((sizeof(vT) / sizeof(T)) > 3)                                           \
             result[3] = _lhs Op ((const T*)&_rhs)[D];                               \
         return result;                                                              \
-    }                                                                               
+    }                                                                               \
+    template<template<typename> class lhsVT, typename lhsT>                         \
+    friend vT operator##Op##(const lhsVT<lhsT>& _lhs, const vProxy& _rhs)           \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = ((const lhsT*)&_lhs)[0] Op ((const T*)&_rhs)[A];                \
+        result[1] = ((const lhsT*)&_lhs)[1] Op ((const T*)&_rhs)[B];                \
+        if ((sizeof(vT) / sizeof(T) > 2) &&                                         \
+           (std::is_same<lhsVT<lhsT>, vec3<lhsT>>::value ||                         \
+            std::is_same<lhsVT<lhsT>, vec4<lhsT>>::value))                          \
+            result[2] = ((const lhsT*)&_lhs)[2] Op ((const T*)&_rhs)[C];            \
+        if ((sizeof(vT) / sizeof(T) > 3) &&                                         \
+            std::is_same<lhsVT<lhsT>, vec4<lhsT>>::value)                           \
+            result[3] = ((const lhsT*)&_lhs)[3] Op ((const T*)&_rhs)[D];            \
+        return result;                                                              \
+    }                                                                               \
+    template<template<typename> class rhsVT, typename rhsT>                         \
+    vT operator##Op##(const rhsVT<rhsT>& _rhs) const                                \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = ((const T*)this)[A] Op ((const rhsT*)&_rhs)[0];                 \
+        result[1] = ((const T*)this)[B] Op ((const rhsT*)&_rhs)[1];                 \
+        if ((sizeof(vT) / sizeof(T) > 2) &&                                         \
+           (std::is_same<rhsVT<rhsT>, vec3<rhsT>>::value ||                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value))                          \
+            result[2] = ((const T*)this)[C] Op ((const rhsT*)&_rhs)[2];             \
+        if ((sizeof(vT) / sizeof(T) > 3) &&                                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value)                           \
+            result[2] = ((const T*)this)[D] Op ((const rhsT*)&_rhs)[3];             \
+        return result;                                                              \
+    }
 
     CREATE_ARITHMETIC_OPERATOR(+);
     CREATE_ARITHMETIC_OPERATOR(-);
@@ -152,7 +182,7 @@ public:
                ((sizeof(vT) / sizeof(T) > 2) && (sizeof(rhsVT) / sizeof(rhsT) > 2) ?\
                (((const T*)this)[C] Op ((const rhsT*)&_rhs)[rhsC]) : true) &&       \
                ((sizeof(vT) / sizeof(T) > 3) && (sizeof(rhsVT) / sizeof(rhsT) > 3) ?\
-               (((const T*)this)[C] Op ((const rhsT*)&_rhs)[rhsC]) : true);         \
+               (((const T*)this)[D] Op ((const rhsT*)&_rhs)[rhsD]) : true);         \
     }                                                                               \
     bool operator##Op##(const T _rhs) const                                         \
     {                                                                               \
@@ -171,6 +201,32 @@ public:
                (_lhs Op ((const T*)&_rhs)[C]) : true) &&                            \
                (((sizeof(vT) / sizeof(T)) > 3) ?                                    \
                (_lhs Op ((const T*)&_rhs)[C]) : true);                              \
+    }                                                                               \
+    template<template<typename> class lhsVT, typename lhsT>                         \
+    friend bool operator##Op##(const lhsVT<lhsT>& _lhs, const vProxy& _rhs)         \
+    {                                                                               \
+        return (((const lhsT*)&_lhs)[0] Op ((const T*)&_rhs)[A]) &&                 \
+               (((const lhsT*)&_lhs)[1] Op ((const T*)&_rhs)[B]) &&                 \
+               (((sizeof(vT) / sizeof(T) > 2) &&                                    \
+               (std::is_same<lhsVT<lhsT>, vec3<lhsT>>::value ||                     \
+                std::is_same<lhsVT<lhsT>, vec4<lhsT>>::value)) ?                    \
+               (((const lhsT*)&_lhs)[2] Op ((const T*)&_rhs)[C]) : true) &&         \
+               (((sizeof(vT) / sizeof(T) > 3) &&                                    \
+                std::is_same<lhsVT<lhsT>, vec4<lhsT>>::value) ?                     \
+               (((const lhsT*)&_lhs)[3] Op ((const T*)&_rhs)[D]) : true);           \
+    }                                                                               \
+    template<template<typename> class rhsVT, typename rhsT>                         \
+    bool operator##Op##(const rhsVT<rhsT>& _rhs)                                    \
+    {                                                                               \
+        return (((const T*)this)[A] Op ((const rhsT*)&_rhs)[0]) &&                  \
+               (((const T*)this)[B] Op ((const rhsT*)&_rhs)[1]) &&                  \
+               (((sizeof(vT) / sizeof(T) > 2) &&                                    \
+               (std::is_same<rhsVT<rhsT>, vec3<rhsT>>::value ||                     \
+                std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value)) ?                    \
+               (((const T*)this)[C] Op ((const rhsT*)&_rhs)[2]) : true) &&          \
+               (((sizeof(vT) / sizeof(T) > 3) &&                                    \
+                std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value) ?                     \
+               (((const T*)this)[D] Op ((const rhsT*)&_rhs)[3]) : true);            \
     }
 
     CREATE_COMPARISON_OPERATOR(== );
@@ -253,25 +309,6 @@ public:
 #   undef CREATE_ASSIGNMENT_OPERATOR
 
 #   define CREATE_ARITHMETIC_OPERATOR(Op)                                           \
-    template<class rhsVT, typename rhsT, int rhsA, int rhsB, int rhsC, int rhsD>    \
-    vec2 operator##Op##(                                                            \
-        const vProxy<rhsVT, rhsT, rhsA, rhsB, rhsC, rhsD>& _rhs) const              \
-    {                                                                               \
-        vec2 result;                                                                \
-        result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];              \
-        result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];              \
-        return result;                                                              \
-    }                                                                               \
-    template<class lhsVT, typename lhsT, int lhsA, int lhsB, int lhsC, int lhsD>    \
-    friend vec2 operator##Op##(                                                     \
-                const vProxy<lhsVT, lhsT, lhsA, lhsB, lhsC, lhsD>& _lhs,            \
-                const vec2& _rhs)                                                   \
-    {                                                                               \
-        vec2 result;                                                                \
-        result[0] = ((const lhsT*)&_lhs)[lhsA] Op((const T*)&_rhs)[0];              \
-        result[1] = ((const lhsT*)&_lhs)[lhsB] Op((const T*)&_rhs)[1];              \
-        return result;                                                              \
-    }                                                                               \
     template<typename rhsT>                                                         \
     vec2 operator##Op##(const vec2<rhsT>& _rhs) const                               \
     {                                                                               \
@@ -311,21 +348,6 @@ public:
 #   undef CREATE_ARITHMETIC_OPERATOR
 
 #   define CREATE_COMPARISON_OPERATOR(Op)                                           \
-    template<class rhsVT, typename rhsT, int rhsA, int rhsB, int rhsC, int rhsD>    \
-    bool operator##Op##(                                                            \
-         const vProxy<rhsVT, rhsT, rhsA, rhsB, rhsC, rhsD>& _rhs) const             \
-    {                                                                               \
-        return (((const T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA]) &&               \
-                    (((const T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB]);            \
-    }                                                                               \
-    template<class lhsVT, typename lhsT, int lhsA, int lhsB, int lhsC, int lhsD>    \
-    friend bool operator##Op##(                                                     \
-                const vProxy<lhsVT, lhsT, lhsA, lhsB, lhsC, lhsD>& _lhs,            \
-                const vec2& _rhs)                                                   \
-    {                                                                               \
-        return (((const lhsT*)&_lhs)[lhsA] Op ((const T*)&_rhs)[0]) &&              \
-                    (((const lhsT*)&_lhs)[lhsB] Op ((const T*)&_rhs)[1]);           \
-    }                                                                               \
     template<typename rhsT>                                                         \
     bool operator##Op##(const vec2<rhsT>& _rhs) const                               \
     {                                                                               \
