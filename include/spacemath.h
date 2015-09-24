@@ -434,6 +434,12 @@ class vec3 : public VectorOperators<vec3<T>, T>
         
     };
     vec3() { }
+    vec3(T _x, T _y, T _z)
+    {
+        ((T*)this)[0] = _x;
+        ((T*)this)[1] = _y;
+        ((T*)this)[2] = _z;
+    }
 };
 
 template<typename T>
@@ -444,6 +450,13 @@ class vec4 : public VectorOperators<vec4<T>, T>
 
     };
     vec4() { }
+    vec4(T _x, T _y, T _z, T _w)
+    {
+        ((T*)this)[0] = _x;
+        ((T*)this)[1] = _y;
+        ((T*)this)[2] = _z;
+        ((T*)this)[3] = _w;
+    }
 };
 
 #endif
