@@ -349,6 +349,49 @@ public:
     CREATE_ARITHMETIC_OPERATOR(>> );
 
 #   undef CREATE_ARITHMETIC_OPERATOR
+
+#   define CREATE_COMPARISON_OPERATOR(Op)                                           \
+    template<template<typename> class rhsVT, typename rhsT>                         \
+    bool operator##Op##(const rhsVT<rhsT>& _rhs) const                              \
+    {                                                                               \
+        return (((const T*)this)[0] Op ((const rhsT*)&_rhs)[0]) &&                  \
+               (((const T*)this)[1] Op ((const rhsT*)&_rhs)[1]) &&                  \
+               (((sizeof(vT) / sizeof(T) > 2) &&                                    \
+               (std::is_same<rhsVT<rhsT>, vec3<rhsT>>::value ||                     \
+                std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value)) ?                    \
+               (((const T*)this)[2] Op ((const rhsT*)&_rhs)[2]) : true) &&          \
+               (((sizeof(vT) / sizeof(T) > 3) &&                                    \
+                std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value) ?                     \
+               (((const T*)this)[3] Op ((const rhsT*)&_rhs)[3]) : true);            \
+    }                                                                               \
+    bool operator##Op##(const T _rhs) const                                         \
+    {                                                                               \
+        return (((const T*)this)[0] Op _rhs) &&                                     \
+               (((const T*)this)[1] Op _rhs) &&                                     \
+               ((sizeof(vT) / sizeof(T)) > 2 ?                                      \
+               ((const T*)this)[2] Op _rhs : true) &&                               \
+               ((sizeof(vT) / sizeof(T)) > 3 ?                                      \
+               ((const T*)this)[3] Op _rhs : true);                                 \
+    }                                                                               \
+    friend bool operator##Op##(const T  _lhs, const vT& _rhs)                       \
+    {                                                                               \
+        return (_lhs Op ((const T*)&_rhs)[0]) &&                                    \
+               (_lhs Op ((const T*)&_rhs)[1]) &&                                    \
+               ((sizeof(vT) / sizeof(T)) > 2 ?                                      \
+               (_lhs Op ((const T*)&_rhs)[2]) : true) &&                            \
+               ((sizeof(vT) / sizeof(T)) > 3 ?                                      \
+               (_lhs Op ((const T*)&_rhs)[3]) : true);                              \
+    }
+
+    CREATE_COMPARISON_OPERATOR(== );
+    CREATE_COMPARISON_OPERATOR(!= );
+    CREATE_COMPARISON_OPERATOR(<= );
+    CREATE_COMPARISON_OPERATOR(>= );
+    CREATE_COMPARISON_OPERATOR(<);
+    CREATE_COMPARISON_OPERATOR(>);
+
+
+#   undef CREATE_COMPARISON_OPERATOR
 };
 
 template<typename T>
