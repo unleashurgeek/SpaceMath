@@ -427,7 +427,7 @@ public:
 };
 
 template<typename T>
-class vec3 : public ArraySubscriptOperators<T>
+class vec3 : public VectorOperators<vec3<T>, T>
 {
     union
     {
@@ -437,7 +437,7 @@ class vec3 : public ArraySubscriptOperators<T>
 };
 
 template<typename T>
-class vec4 : public ArraySubscriptOperators<T>
+class vec4 : public VectorOperators<vec4<T>, T>
 {
     union
     {
