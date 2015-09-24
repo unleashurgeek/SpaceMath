@@ -296,6 +296,59 @@ public:
     CREATE_ASSIGNMENT_OPERATOR(>>= );
 
 #   undef CREATE_ASSIGNMENT_OPERATOR
+
+#   define CREATE_ARITHMETIC_OPERATOR(Op)                                           \
+    template<template<typename> class rhsVT, typename rhsT>                         \
+    vT operator##Op##(const rhsVT<rhsT>& _rhs) const                                \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[0];                 \
+        result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[1];                 \
+        if ((sizeof(vT) / sizeof(T)) > 2 &&                                         \
+           (std::is_same<rhsVT<rhsT>, vec3<rhsT>>::value ||                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value))                          \
+            result[2] = ((const T*)this)[2] Op ((const rhsT*)&_rhs)[2];             \
+        if ((sizeof(vT) / sizeof(T)) > 2 &&                                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value)                           \
+            result[3] = ((const T*)this)[3] Op ((const rhsT*)&_rhs)[3];             \
+        return result;                                                              \
+    }                                                                               \
+    vT operator##Op##(const T _rhs) const                                           \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = ((const T*)this)[0] Op _rhs;                                    \
+        result[1] = ((const T*)this)[1] Op _rhs;                                    \
+        if ((sizeof(vT) / sizeof(T)) > 2)                                           \
+            result[2] = ((const T*)this)[2] Op _rhs;                                \
+        if ((sizeof(vT) / sizeof(T)) > 3)                                           \
+            result[3] = ((const T*)this)[3] Op _rhs;                                \
+        return result;                                                              \
+    }                                                                               \
+    friend vT operator##Op##(const T _lhs, const vT& _rhs)                          \
+    {                                                                               \
+        vT result;                                                                  \
+        result[0] = _lhs Op ((const T*)&_rhs)[0];                                   \
+        result[1] = _lhs Op ((const T*)&_rhs)[1];                                   \
+        if ((sizeof(vT) / sizeof(T)) > 2)                                           \
+            result[2] = _lhs Op ((const T*)&_rhs)[2];                               \
+        if ((sizeof(vT) / sizeof(T)) > 3)                                           \
+            result[3] = _lhs Op ((const T*)&_rhs)[3];                               \
+        return result;                                                              \
+    }
+
+    CREATE_ARITHMETIC_OPERATOR(+);
+    CREATE_ARITHMETIC_OPERATOR(-);
+    CREATE_ARITHMETIC_OPERATOR(*);
+    CREATE_ARITHMETIC_OPERATOR(/ );
+
+    CREATE_ARITHMETIC_OPERATOR(| );
+    CREATE_ARITHMETIC_OPERATOR(&);
+    CREATE_ARITHMETIC_OPERATOR(^);
+    CREATE_ARITHMETIC_OPERATOR(%);
+    CREATE_ARITHMETIC_OPERATOR(<< );
+    CREATE_ARITHMETIC_OPERATOR(>> );
+
+#   undef CREATE_ARITHMETIC_OPERATOR
 };
 
 template<typename T>
