@@ -239,8 +239,67 @@ public:
 #   undef CREATE_COMPARISON_OPERATOR
 };
 
+template<class vT, typename T>
+class VectorOperators : public ArraySubscriptOperators<T>
+{
+public:
+#   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
+    template<template<typename> class rhsVT, typename rhsT>                         \
+    VectorOperators& operator##Op##(const rhsVT<rhsT>& _rhs)                        \
+    {                                                                               \
+        ((T*)this)[0] Op ((const rhsT*)&_rhs)[0];                                   \
+        ((T*)this)[1] Op ((const rhsT*)&_rhs)[1];                                   \
+        if ((sizeof(vT) / sizeof(T)) > 2 &&                                         \
+           (std::is_same<rhsVT<rhsT>, vec3<rhsT>>::value ||                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value))                          \
+            ((T*)this)[2] Op ((const rhsT*)&_rhs)[2];                               \
+        if ((sizeof(vT) / sizeof(T)) > 3 &&                                         \
+            std::is_same<rhsVT<rhsT>, vec4<rhsT>>::value)                           \
+            ((T*)this)[3] Op ((const rhsT*)&_rhs)[3];                               \
+        return *this;                                                               \
+    }                                                                               \
+    VectorOperators& operator##Op##(const T _rhs)                                   \
+    {                                                                               \
+        ((T*)this)[0] Op _rhs;                                                      \
+        ((T*)this)[1] Op _rhs;                                                      \
+        if ((sizeof(vT) / sizeof(T)) > 2)                                           \
+            ((T*)this)[2] Op _rhs;                                                  \
+        if ((sizeof(vT) / sizeof(T)) > 3)                                           \
+            ((T*)this)[3] Op _rhs;                                                  \
+        return *this;                                                               \
+    }                                                                               \
+    template<class rhsVT, typename rhsT, int rhsA, int rhsB, int rhsC, int rhsD>    \
+    VectorOperators& operator##Op##(                                                \
+                     const vProxy<rhsVT, rhsT, rhsA, rhsB, rhsC, rhsD>& _rhs)       \
+    {                                                                               \
+        ((T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];                                \
+        ((T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];                                \
+        if ((sizeof(vT) / sizeof(T)) > 2 && (sizeof(rhsVT) / sizeof(rhsT)) > 2)     \
+            ((T*)this)[2] Op ((const rhsT*)&_rhs)[rhsC];                            \
+        if ((sizeof(vT) / sizeof(T)) > 3 && (sizeof(rhsVT) / sizeof(rhsT)) > 3)     \
+            ((T*)this)[3] Op ((const rhsT*)&_rhs)[rhsD];                            \
+        return *this;                                                               \
+    }
+
+    CREATE_ASSIGNMENT_OPERATOR(= );
+
+    CREATE_ASSIGNMENT_OPERATOR(+= );
+    CREATE_ASSIGNMENT_OPERATOR(-= );
+    CREATE_ASSIGNMENT_OPERATOR(*= );
+    CREATE_ASSIGNMENT_OPERATOR(/= );
+
+    CREATE_ASSIGNMENT_OPERATOR(|= );
+    CREATE_ASSIGNMENT_OPERATOR(&= );
+    CREATE_ASSIGNMENT_OPERATOR(^= );
+    CREATE_ASSIGNMENT_OPERATOR(%= );
+    CREATE_ASSIGNMENT_OPERATOR(<<= );
+    CREATE_ASSIGNMENT_OPERATOR(>>= );
+
+#   undef CREATE_ASSIGNMENT_OPERATOR
+};
+
 template<typename T>
-class vec2 : public ArraySubscriptOperators<T>
+class vec2 : public VectorOperators<vec2<T>, T>
 {
 public:
     union
@@ -269,108 +328,6 @@ public:
         ((T*)this)[0] = ((const pT*)&_v)[A];
         ((T*)this)[1] = ((const pT*)&_v)[B];
     }
-
-#   define CREATE_ASSIGNMENT_OPERATOR(Op)                                           \
-    template<typename rhsT>                                                         \
-    vec2& operator##Op##(const vec2<rhsT>& _rhs)                                    \
-    {                                                                               \
-        ((T*)this)[0] Op ((const rhsT*)&_rhs)[0];                                   \
-        ((T*)this)[1] Op ((const rhsT*)&_rhs)[1];                                   \
-        return *this;                                                               \
-    }                                                                               \
-    vec2& operator##Op##(const T _rhs)                                              \
-    {                                                                               \
-        ((T*)this)[0] Op _rhs;                                                      \
-        ((T*)this)[1] Op _rhs;                                                      \
-        return *this;                                                               \
-    }                                                                               \
-    template<class rhsVT, typename rhsT, int rhsA, int rhsB, int rhsC, int rhsD>    \
-    vec2& operator##Op##(const vProxy<rhsVT, rhsT, rhsA, rhsB, rhsC, rhsD>& _rhs)   \
-    {                                                                               \
-        ((T*)this)[0] Op ((const rhsT*)&_rhs)[rhsA];                                \
-        ((T*)this)[1] Op ((const rhsT*)&_rhs)[rhsB];                                \
-        return *this;                                                               \
-    }
-
-    CREATE_ASSIGNMENT_OPERATOR(= );
-
-    CREATE_ASSIGNMENT_OPERATOR(+= );
-    CREATE_ASSIGNMENT_OPERATOR(-= );
-    CREATE_ASSIGNMENT_OPERATOR(*= );
-    CREATE_ASSIGNMENT_OPERATOR(/= );
-
-    CREATE_ASSIGNMENT_OPERATOR(|= );
-    CREATE_ASSIGNMENT_OPERATOR(&= );
-    CREATE_ASSIGNMENT_OPERATOR(^= );
-    CREATE_ASSIGNMENT_OPERATOR(%= );
-    CREATE_ASSIGNMENT_OPERATOR(<<= );
-    CREATE_ASSIGNMENT_OPERATOR(>>= );
-
-#   undef CREATE_ASSIGNMENT_OPERATOR
-
-#   define CREATE_ARITHMETIC_OPERATOR(Op)                                           \
-    template<typename rhsT>                                                         \
-    vec2 operator##Op##(const vec2<rhsT>& _rhs) const                               \
-    {                                                                               \
-        vec2 result;                                                                \
-        result[0] = ((const T*)this)[0] Op ((const rhsT*)&_rhs)[0];                 \
-        result[1] = ((const T*)this)[1] Op ((const rhsT*)&_rhs)[1];                 \
-        return result;                                                              \
-    }                                                                               \
-    vec2 operator##Op##(const T _rhs) const                                         \
-    {                                                                               \
-        vec2 result;                                                                \
-        result[0] = ((const T*)this)[0] Op _rhs;                                    \
-        result[1] = ((const T*)this)[1] Op _rhs;                                    \
-        return result;                                                              \
-    }                                                                               \
-    friend vec2 operator##Op##(const T _lhs, const vec2& _rhs)                      \
-    {                                                                               \
-        vec2 result;                                                                \
-        result[0] = _lhs Op ((const T*)&_rhs)[0];                                   \
-        result[1] = _lhs Op ((const T*)&_rhs)[1];                                   \
-        return result;                                                              \
-    }
-
-    CREATE_ARITHMETIC_OPERATOR(+);
-    CREATE_ARITHMETIC_OPERATOR(-);
-    CREATE_ARITHMETIC_OPERATOR(*);
-    CREATE_ARITHMETIC_OPERATOR(/ );
-
-    CREATE_ARITHMETIC_OPERATOR(| );
-    CREATE_ARITHMETIC_OPERATOR(&);
-    CREATE_ARITHMETIC_OPERATOR(^);
-    CREATE_ARITHMETIC_OPERATOR(%);
-    CREATE_ARITHMETIC_OPERATOR(<< );
-    CREATE_ARITHMETIC_OPERATOR(>> );
-
-
-#   undef CREATE_ARITHMETIC_OPERATOR
-
-#   define CREATE_COMPARISON_OPERATOR(Op)                                           \
-    template<typename rhsT>                                                         \
-    bool operator##Op##(const vec2<rhsT>& _rhs) const                               \
-    {                                                                               \
-        return (((const T*)this)[0] Op ((const rhsT*)&_rhs)[0]) &&                  \
-                    (((const T*)this)[1] Op ((const rhsT*)&_rhs)[1]);               \
-    }                                                                               \
-    bool operator##Op##(const T _rhs) const                                         \
-    {                                                                               \
-        return (((const T*)this)[0] Op _rhs) && (((const T*)this)[1] Op _rhs);      \
-    }                                                                               \
-    friend bool operator##Op##(const T _lhs, const vec2& _rhs)                      \
-    {                                                                               \
-        return (_lhs Op ((const T*)&_rhs)[0]) && (_lhs Op ((const T*)&_rhs)[1]);    \
-    }
-
-    CREATE_COMPARISON_OPERATOR(== );
-    CREATE_COMPARISON_OPERATOR(!= );
-    CREATE_COMPARISON_OPERATOR(<= );
-    CREATE_COMPARISON_OPERATOR(>= );
-    CREATE_COMPARISON_OPERATOR(< );
-    CREATE_COMPARISON_OPERATOR(> );
-
-#   undef CREATE_COMPARISON_OPERATOR
 };
 
 template<typename T>
