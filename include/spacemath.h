@@ -412,14 +412,15 @@ public:
 
     vec2() { }
     vec2(T _x, T _y) { ((T*)this)[0] = _x; ((T*)this)[1] = _y; }
-    template<typename iT>
-    vec2(vec2<iT>& _v)
+    vec2(T _x) { vec2(_x, _x); }
+    template<template<typename> class vT, typename iT>
+    vec2(vT<iT>& _v)
     {
         ((T*)this)[0] = ((const iT*)&_v)[0];
         ((T*)this)[1] = ((const iT*)&_v)[1];
     }
-    template<typename pT, int A, int B, int C, int D>
-    vec2(vProxy<vec2, pT, A, B, C, D>& _v)
+    template<class vT, typename pT, int A, int B, int C, int D>
+    vec2(vProxy<vT, pT, A, B, C, D>& _v)
     {
         ((T*)this)[0] = ((const pT*)&_v)[A];
         ((T*)this)[1] = ((const pT*)&_v)[B];
