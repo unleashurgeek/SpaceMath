@@ -502,6 +502,44 @@ public:
         ((T*)this)[2] = _z;
         ((T*)this)[3] = _w;
     }
+    vec4(T _x) { vec4(_x, _x, _x, _x); }
+
+    template<template<class> vT, typename pT>
+    vec4(vT<pT>& _v)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[0];
+        ((T*)this)[1] = ((const pT*)&_v)[1];
+        if (std::is_same<vT<pT>, vec3<pT>>::value)
+        {
+            ((T*)this)[2] = ((const pT*)&_v)[2];
+            ((T*)this)[3] = 0;
+        }
+        else if (std::is_same<vT<pT>, vec4<pT>>::value)
+        {
+            ((T*)this)[2] = ((const pT*)&_v)[2];
+            ((T*)this)[3] = 0;
+        }
+    }
+    template<template<class> vT, typename pT>
+    vec4(vT<pT>& _v, T _x)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[0];
+        ((T*)this)[1] = ((const pT*)&_v)[1];
+        if (std::is_same<vT<pT>, vec3<pT>>::value ||
+            std::is_same<vT<pT>, vec4<pT>>::value)
+            ((T*)this)[2] = ((const pT*)&_v)[2];
+        else
+            ((T*)this)[2] = 0;
+        ((T*)this)[3] = _x;
+    }
+    template<template<class> vT, typename pT>
+    vec4(vT<pT>& _v, T _x, T _y)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[0];
+        ((T*)this)[1] = ((const pT*)&_v)[1];
+        ((T*)this)[2] = _x;
+        ((T*)this)[3] = _y;
+    }
 };
 
 #endif
