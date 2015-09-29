@@ -429,9 +429,12 @@ public:
 template<typename T>
 class vec3 : public VectorOperators<vec3<T>, T>
 {
+public:
     union
     {
-        
+        struct { T x, y, z };
+        struct { T r, g, b };
+        struct { T s, t, p };
     };
     vec3() { }
     vec3(T _x, T _y, T _z)
@@ -445,9 +448,12 @@ class vec3 : public VectorOperators<vec3<T>, T>
 template<typename T>
 class vec4 : public VectorOperators<vec4<T>, T>
 {
+public:
     union
     {
-
+        struct { T x, y, z, w };
+        struct { T r, g, b, a };
+        struct { T s, t, p, q };
     };
     vec4() { }
     vec4(T _x, T _y, T _z, T _w)
