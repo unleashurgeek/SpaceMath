@@ -444,6 +444,44 @@ public:
         ((T*)this)[1] = _y;
         ((T*)this)[2] = _z;
     }
+    vec3(T _x) { vec3(_x, _x, _x); }
+    
+    template<template<typename> class vT, typename pT>
+    vec3(vT<pT>& _v)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[0];
+        ((T*)this)[1] = ((const pT*)&_v)[1];
+        if (std::is_same<vT<pT>, vec3<pT>>::value ||
+            std::is_same<vT<pT>, vec4<pT>>::value)
+            ((T*)this)[2] = ((const pT*)&_v)[2];
+        else
+            ((T*)this)[2] = 0;
+    }
+    template<template<typename> class vT, typename pT>
+    vec3(vT<pT>& _v, T _x)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[0];
+        ((T*)this)[1] = ((const pT*)&_v)[1];
+        ((T*)this)[2] = _x;
+    }
+
+    template<class vT, typename pT, int A, int B, int C, int D>
+    vec3(vProxy<vT, pT, A, B, C, D>& _v)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[A];
+        ((T*)this)[1] = ((const pT*)&_v)[B];
+        if (sizeof(vT) / sizeof(pT) > 2)
+            ((T*)this)[2] = ((const pT*)this)[C];
+        else
+            ((T*)this)[2] = 0;
+    }
+    template<class vT, typename pT, int A, int B, int C, int D>
+    vec3(vProxy<vT, pT, A, B, C, D>& _v, T _x)
+    {
+        ((T*)this)[0] = ((const pT*)&_v)[A];
+        ((T*)this)[1] = ((const pT*)&_v)[B];
+        ((T*)this)[2] = _x;
+    }
 };
 
 template<typename T>
