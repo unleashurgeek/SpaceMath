@@ -999,7 +999,7 @@ public:
         else if (std::is_same<vT<pT>, vec4<pT>>::value)
         {
             ((T*)this)[2] = ((const pT*)&_v)[2];
-            ((T*)this)[3] = 0;
+            ((T*)this)[3] = ((const pT*)&_v)[3];
         }
     }
     template<template<class> class vT, typename pT>
