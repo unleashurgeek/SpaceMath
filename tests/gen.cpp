@@ -56,7 +56,7 @@ std::vector<vProxy> vecGen(int size)
 
 void printVProxys(std::vector<vProxy> data)
 {
-    std::string xyza = "xyza";
+    std::string xyza = "xyzw";
     std::string rgba = "rgba";
     std::string stpq = "stpq";
     std::ofstream o("log.txt");
